@@ -20,6 +20,11 @@ router.post("/logout", logout);
 
 router.get("/verify",  verifyToken);
 
-router.get("/profile", authRequired);
-
+router.get("/profile", authRequired, async (req, res) => {
+  res.json({
+    id: req.user.id,
+    username: req.user.username,
+    rol: req.user.rol
+  });
+});
 export default router;   

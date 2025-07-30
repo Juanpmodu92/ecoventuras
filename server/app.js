@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 
 import authRoutes from './routes/auth.routes.js';
 import productRoutes from "./routes/product.routes.js";
+import cartRoutes from "./routes/cart.routes.js";
+import orderRoutes from "./routes/order.routes.js"
 
 const app = express();
 
@@ -17,8 +19,12 @@ app.use(cookieParser());
 
 // Aquí luego montamos rutas: app.use("/api/usuarios", userRoutes)
 
-app.use("/api",authRoutes);
+app.use("/api", authRoutes);
 
 app.use("/api", productRoutes);
+
+app.use("/api", cartRoutes);
+
+app.use("/api", orderRoutes);
 
 export default app;

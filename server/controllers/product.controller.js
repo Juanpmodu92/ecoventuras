@@ -82,7 +82,7 @@ export const deleteProduct = async (req, res) => {
 
 export const getAvailableProducts = async (req, res) => {
     try {
-        const products = await Product.find({}, "name stock codigo"); // solo muestra lo que el cliente necesita
+        const products = await Product.find({}, "name description stock code price" );
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });
