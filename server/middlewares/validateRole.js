@@ -10,4 +10,5 @@ export const isCliente = (req, res, next) => {
         return res.status(403).json({ message: "Acceso denegado: solo clientes" });
     }
     next();
+    
 };

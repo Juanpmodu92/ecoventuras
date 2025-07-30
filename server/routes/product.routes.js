@@ -5,7 +5,8 @@ import {
     getProductById,
     updateProduct,
     deleteProduct,
-    getProducts
+    getProducts,
+    getLowStockCount
 } from "../controllers/product.controller.js";
 
 import { validateSchema } from "../middlewares/validator.middleware.js";
@@ -25,7 +26,7 @@ router.put("/products/:id", authRequired, isAdmin, validateSchema(productSchema)
 router.delete("/products/:id", authRequired, isAdmin, deleteProduct);
 router.get("/products/:id", authRequired, isAdmin, validateSchema(productSchema), getProductById);
 router.get("/admin/products",authRequired, isAdmin, validateSchema(productSchema), getProducts );
-
+router.get("/admin/low-stock-count", authRequired, isAdmin, getLowStockCount);
 
 
 export default router;
