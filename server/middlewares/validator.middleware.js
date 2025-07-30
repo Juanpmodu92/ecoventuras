@@ -17,25 +17,32 @@ export const validateSchema = (schema) => (req, res, next) => {
             const mensajes = parsedErrors.map((err) => {
                 const campo = err.path[0];
                 switch (campo) {
+                    case "firstName":
+                        return err.message || "El nombre es requerido";
+                    case "lastName":
+                        return err.message || "El apellido es requerido";
                     case "username":
-                        return err.message || "Username is required";
+                        return err.message || "El nombre de usuario es requerido";
                     case "email":
                         return err.code === "invalid_format"
-                            ? "Email is not valid"
-                            : err.message || "Email is required";
+                            ? "El correo electrónico no es válido"
+                            : err.message || "El correo electrónico es requerido";
                     case "password":
-                        return err.message || "Password is required",
-                        "Password must be at least 6 characters";
+                        return err.message || "La contraseña es requerida";
+                    case "documentType":
+                        return err.message || "Tipo de documento es requerido";
+                    case "documentNumber":
+                        return err.message || "Número de documento es requerido";
                     case "title":
-                        return err.message || "Title is required";
+                        return err.message || "El título es requerido";
                     case "description":
-                        return err.message || "Description is required";
+                        return err.message || "La descripción es requerida";
                     case "date":
                         return err.code === "invalid_string"
-                            ? "Date must be a valid ISO string"
-                            : err.message || "Invalid date format";
+                            ? "La fecha debe tener formato ISO válido"
+                            : err.message || "Formato de fecha inválido";
                     default:
-                        return `Invalid field: ${campo}`;
+                        return `Campo inválido: ${campo}`;
                 }
             });
 
@@ -47,4 +54,3 @@ export const validateSchema = (schema) => (req, res, next) => {
         });
     }
 };
-

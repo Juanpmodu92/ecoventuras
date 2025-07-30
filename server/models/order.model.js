@@ -28,6 +28,9 @@ const orderSchema = new mongoose.Schema({
         enum: ["pendiente", "confirmada", "enviada", "entregada", "cancelada"],
         default: "pendiente"
     },
+    estimatedDeliveryDate: {
+    type: Date
+    },
     createdAt: {
         type: Date,
         default: Date.now

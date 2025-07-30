@@ -1,23 +1,18 @@
 import { z } from "zod";
 
 export const registerSchema = z.object({
-    username: z.string({
-        required_error: "Username is required",
+    firstName: z.string().min(1, "El nombre es obligatorio"),
+    lastName: z.string().min(1, "El apellido es obligatorio"),
+    username: z.string().min(1, "El nombre de usuario es obligatorio"),
+    email: z.string().email("El correo no es válido"),
+    password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+    documentType: z.enum(["CC", "CE", "TI", "NIT"], {
+        errorMap: () => ({ message: "Tipo de documento no válido" }),
     }),
-    email: z
-        .string({
-            required_error: "Email is required",
-        })
-        .email({
-            message: "Email is not valid",
-        }),
-    password: z
-        .string({
-            required_error: "Password is required",
-        })
-        .min(6, {
-            message: "Password must be at least 6 characters",
-        }),
+    documentNumber: z
+    .number({ invalid_type_error: "Debe ser un número" })
+    .int("Debe ser un número entero")
+    .min(1000000, "Número de documento no válido")
 });
 
 export const loginSchema = z.object({

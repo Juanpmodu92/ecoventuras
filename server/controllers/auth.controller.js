@@ -6,25 +6,36 @@ import { createAccessToken } from "../libs/jwt.js";
 
 export const register = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const {
+            firstName,
+            lastName,
+            username,
+            email,
+            password,
+            documentType,
+            documentNumber,
+            rol
+        } = req.body;
 
         const userFound = await User.findOne({ email });
-
         if (userFound)
-            return res.status(400).json(["The email is already in use"],);
+            return res.status(400).json(["The email is already in use"]);
 
         const passwordHash = await bcrypt.hash(password, 10);
 
         const newUser = new User({
+            firstName,
+            lastName,
             username,
             email,
             password: passwordHash,
-            rol: req.body.rol || 'client'
+            documentType,
+            documentNumber,
+            rol: rol || 'client'
         });
 
         const userSaved = await newUser.save();
 
-        // create access token
         const token = await createAccessToken({
             id: userSaved._id,
             username: userSaved.username,
@@ -37,11 +48,14 @@ export const register = async (req, res) => {
             sameSite: "none",
         });
 
-        
         res.json({
             id: userSaved._id,
             username: userSaved.username,
+            firstName: userSaved.firstName,
+            lastName: userSaved.lastName,
             email: userSaved.email,
+            documentType: userSaved.documentType,
+            documentNumber: userSaved.documentNumber,
             rol: userSaved.rol
         });
     } catch (error) {
@@ -51,7 +65,15 @@ export const register = async (req, res) => {
 
 export const registerAdmin = async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const {
+            firstName,
+            lastName,
+            username,
+            email,
+            password,
+            documentType,
+            documentNumber
+        } = req.body;
 
         const existingUser = await User.findOne({ email });
         if (existingUser)
@@ -60,9 +82,13 @@ export const registerAdmin = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newAdmin = new User({
+            firstName,
+            lastName,
             username,
             email,
             password: hashedPassword,
+            documentType,
+            documentNumber,
             rol: 'admin'
         });
 
@@ -83,12 +109,15 @@ export const registerAdmin = async (req, res) => {
         res.status(201).json({
             id: savedAdmin._id,
             username: savedAdmin.username,
+            firstName: savedAdmin.firstName,
+            lastName: savedAdmin.lastName,
             email: savedAdmin.email,
+            documentType: savedAdmin.documentType,
+            documentNumber: savedAdmin.documentNumber,
             rol: savedAdmin.rol
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
-        console.log(error)
     }
 };
 
@@ -115,13 +144,16 @@ export const login = async (req, res) => {
             rol: userFound.rol
         });
 
-        res.cookie("token", token, {
-        });
+        res.cookie("token", token);
 
         res.json({
             id: userFound._id,
+            firstName: userFound.firstName,
+            lastName: userFound.lastName,
             username: userFound.username,
             email: userFound.email,
+            documentType: userFound.documentType,
+            documentNumber: userFound.documentNumber,
             rol: userFound.rol,
             createdAt: userFound.createdAt,
             updatedAt: userFound.updatedAt,
@@ -144,7 +176,11 @@ export const verifyToken = async (req, res) => {
         return res.json({
             id: userFound._id,
             username: userFound.username,
+            firstName: userFound.firstName,
+            lastName: userFound.lastName,
             email: userFound.email,
+            documentType: userFound.documentType,
+            documentNumber: userFound.documentNumber,
             rol: userFound.rol
         });
     });
