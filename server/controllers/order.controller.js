@@ -27,7 +27,7 @@ export const createOrder = async (req, res) => {
     }
 
     const estimatedDeliveryDate = new Date();
-    estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 3); // +3 días naturales
+    estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 3);
 
     const newOrder = new Order({
       userId,
@@ -76,7 +76,7 @@ export const getOrders = async (req, res) => {
 export const getAllOrders = async (req, res) => {
   const { status } = req.query;
 
-  console.log("Estado recibido por query:", status); // 👈 Esto imprime lo recibido
+  console.log("Estado recibido por query:", status);
 
   try {
     const query = {};
@@ -88,7 +88,7 @@ export const getAllOrders = async (req, res) => {
 
     res.status(200).json(orders);
   } catch (error) {
-    console.error("Error en getAllOrders:", error); // para mayor depuración
+    console.error("Error en getAllOrders:", error);
     res.status(500).json({ message: error.message });
   }
 };

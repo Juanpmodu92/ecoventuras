@@ -1,4 +1,4 @@
-// routes/report.routes.js
+
 import { Router } from "express";
 import { getSalesReport } from "../controllers/report.controller.js";
 import { authRequired } from "../middlewares/validateToken.js";

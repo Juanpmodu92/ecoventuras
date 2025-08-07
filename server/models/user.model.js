@@ -43,7 +43,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['admin', 'client'],
         default: 'client'
-    }
+    },
+    favorites: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product"
+    }]
 }, {
     timestamps: true
 });
@@ -62,3 +66,4 @@ const productSchema = new mongoose.Schema({
 });
 
 export default mongoose.model('User', userSchema);
+

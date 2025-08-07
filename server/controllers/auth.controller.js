@@ -186,6 +186,50 @@ export const verifyToken = async (req, res) => {
     });
 };
 
+export const updateProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const {
+            firstName,
+            lastName,
+            username,
+            email,
+            documentType,
+            documentNumber
+        } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+
+        if (firstName !== undefined) user.firstName = firstName;
+        if (lastName !== undefined) user.lastName = lastName;
+        if (username !== undefined) user.username = username;
+        if (email !== undefined) user.email = email;
+        if (documentType !== undefined) user.documentType = documentType;
+        if (documentNumber !== undefined) user.documentNumber = documentNumber;
+
+        await user.save();
+
+        res.status(200).json({
+            message: "Perfil actualizado correctamente",
+            user: {
+                id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                username: user.username,
+                email: user.email,
+                documentType: user.documentType,
+                documentNumber: user.documentNumber,
+                rol: user.rol,
+                updatedAt: user.updatedAt
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export const logout = async (req, res) => {
     res.cookie("token", "", {
         httpOnly: true,
