@@ -10,12 +10,17 @@ export const registerSchema = z.object({
         errorMap: () => ({ message: "Tipo de documento no válido" }),
     }),
     documentNumber: z
-    .number({ invalid_type_error: "Debe ser un número" })
-    .int("Debe ser un número entero")
-    .min(1000000, "Número de documento no válido")
+        .number({ invalid_type_error: "Debe ser un número" })
+        .int("Debe ser un número entero")
+        .min(1000000, "Número de documento no válido")
 });
 
 export const loginSchema = z.object({
     email: z.string().email(),
     password: z.string().min(6),
+});
+
+export const changePasswordSchema = z.object({
+    currentPassword: z.string().min(6, "La contraseña actual debe tener mínimo 6 caracteres"),
+    newPassword: z.string().min(6, "La nueva contraseña debe tener mínimo 6 caracteres"),
 });

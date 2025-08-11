@@ -29,6 +29,10 @@ export const validateSchema = (schema) => (req, res, next) => {
                             : err.message || "El correo electrónico es requerido";
                     case "password":
                         return err.message || "La contraseña es requerida";
+                    case "currentPassword":
+                        return err.message || "La contraseña actual es requerida";
+                    case "newPassword":
+                        return err.message || "La nueva contraseña es requerida";
                     case "documentType":
                         return err.message || "Tipo de documento es requerido";
                     case "documentNumber":

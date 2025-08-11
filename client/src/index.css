@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  background-image: 
+    url('/Img/fondo.png'),
+    linear-gradient(to bottom, #96A999, #E0E7DF);
+  background-size: cover; /* La imagen cubre todo el fondo */
+  background-position: center; /* Centrada */
+  background-repeat: no-repeat; /* No se repite */
+  color: #333;
+  font-family: Arial, sans-serif;
+  margin: 0; /* Elimina márgenes para que el fondo ocupe toda la ventana */
+  min-height: 100vh; /* Ocupa toda la altura visible */
+}

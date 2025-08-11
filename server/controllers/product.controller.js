@@ -1,16 +1,30 @@
 import Product from "../models/product.model.js";
 
-// Crear producto
+// Crear producto con imagen
 export const createProduct = async (req, res) => {
     try {
-        const { name, description, price, stock, code } = req.body;
+        const { name, description, price, stock, code, category } = req.body;
 
         const existingProduct = await Product.findOne({ code });
         if (existingProduct) {
             return res.status(400).json({ message: "El producto ya existe." });
         }
 
-        const newProduct = new Product({ name, description, price, stock, code });
+        // ✅ Guardar la URL completa directamente
+        const image = req.file 
+            ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+            : "";
+
+        const newProduct = new Product({
+            name,
+            description,
+            price,
+            stock,
+            code,
+            category,
+            image
+        });
+
         const savedProduct = await newProduct.save();
 
         res.status(201).json(savedProduct);
@@ -18,6 +32,7 @@ export const createProduct = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 // Obtener todos
 export const getProducts = async (req, res) => {
@@ -82,18 +97,29 @@ export const deleteProduct = async (req, res) => {
 
 export const getAvailableProducts = async (req, res) => {
     try {
-        const products = await Product.find({}, "name description stock price code");
+        const products = await Product.find(
+            {},
+            "name description stock price code category image"
+        );
 
-        const productsWithLowStock = products.map(product => ({
-            ...product.toObject(),
-            lowStock: product.stock <= 10
-        }));
+        const productsWithUrl = products.map(product => {
+            const img = product.image?.startsWith("http")
+                ? product.image
+                : `${req.protocol}://${req.get("host")}${product.image}`;
+            
+            return {
+                ...product.toObject(),
+                imageUrl: img,
+                lowStock: product.stock <= 10
+            };
+        });
 
-        res.json(productsWithLowStock);
+        res.json(productsWithUrl);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 export const getLowStockCount = async (req, res) => {
     try {

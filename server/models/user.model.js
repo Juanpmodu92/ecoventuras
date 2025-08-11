@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    birthDate: {
+        type: Date,
+        required: true
+    },
     documentType: {
         type: String,
         enum: ["CC", "CE", "TI", "NIT"],
@@ -27,7 +31,8 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        unique: true
     },
     email: {
         type: String,
@@ -37,6 +42,19 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    termsRead: {
+        type: Boolean,
+        required: true
+    },
+    termsAccept: {
+        type: Boolean,
         required: true
     },
     rol: {

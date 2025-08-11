@@ -9,29 +9,58 @@ export const register = async (req, res) => {
         const {
             firstName,
             lastName,
+            birthDate,
             username,
             email,
             password,
+            confirmPassword,
             documentType,
             documentNumber,
+            phone,
+            termsRead,
+            termsAccept,
             rol
         } = req.body;
 
-        const userFound = await User.findOne({ email });
-        if (userFound)
-            return res.status(400).json(["The email is already in use"]);
+        // Validar campos obligatorios
+        if (
+            !firstName || !lastName || !birthDate || !username || !email ||
+            !password || !confirmPassword || !documentType || !documentNumber ||
+            !phone || termsRead !== true || termsAccept !== true
+        ) {
+            return res.status(400).json({ message: "Todos los campos son obligatorios" });
+        }
 
+        // Validar contraseñas
+        if (password !== confirmPassword) {
+            return res.status(400).json({ message: "Las contraseñas no coinciden" });
+        }
+
+        // Verificar si ya existe el usuario por email o documento
+        const userFound = await User.findOne({
+            $or: [{ email }, { documentNumber }]
+        });
+        if (userFound) {
+            return res.status(400).json({ message: "El email o número de documento ya está en uso" });
+        }
+
+        // Encriptar contraseña
         const passwordHash = await bcrypt.hash(password, 10);
 
+        // Crear usuario
         const newUser = new User({
             firstName,
             lastName,
+            birthDate,
             username,
             email,
             password: passwordHash,
             documentType,
             documentNumber,
-            rol: rol || 'client'
+            phone,
+            termsRead,
+            termsAccept,
+            rol: rol || "client"
         });
 
         const userSaved = await newUser.save();
@@ -53,9 +82,11 @@ export const register = async (req, res) => {
             username: userSaved.username,
             firstName: userSaved.firstName,
             lastName: userSaved.lastName,
+            birthDate: userSaved.birthDate,
             email: userSaved.email,
             documentType: userSaved.documentType,
             documentNumber: userSaved.documentNumber,
+            phone: userSaved.phone,
             rol: userSaved.rol
         });
     } catch (error) {
@@ -229,6 +260,27 @@ export const updateProfile = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+
+        const user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch)
+            return res.status(400).json({ message: "La contraseña actual es incorrecta" });
+
+        user.password = await bcrypt.hash(newPassword, 10);
+        await user.save();
+
+        res.status(200).json({ message: "Contraseña actualizada correctamente" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 export const logout = async (req, res) => {
     res.cookie("token", "", {
