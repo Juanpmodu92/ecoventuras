@@ -21,6 +21,10 @@ import AdminOrdersPage from "./pages/AdminOrdersPage.jsx";
 import AdminReportsPage from "./pages/AdminReportsPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import ProductPage from "./pages/ProductPage.jsx";
+import PaymentPage from "./pages/PaymentPage";
+import CheckoutConfirmPage from "./pages/CheckoutConfirmPage.jsx";
+import OrderDetailPage from "./pages/OrderDetailPage.jsx";
+import ProductDetailPage from "./pages/ProductDetailPage";
 
 export default function App() {
   return (
@@ -33,15 +37,19 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/products" element={<ProductPage />} />
+          <Route path="/product/:id" element={<ProductDetailPage />} />
 
           {/* Rutas protegidas */}
           <Route element={<ProtectedRoute />}>
             <Route path="/cart" element={<CartPage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/orders/:id" element={<OrderDetailPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/profile/change-password" element={<ChangePasswordPage />} />
+            <Route path="/checkout/payment" element={<PaymentPage />} />
+            <Route path="/checkout/confirm" element={<CheckoutConfirmPage />} />
           </Route>
 
           {/* Rutas admin */}

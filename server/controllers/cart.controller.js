@@ -54,16 +54,20 @@ export const getCart = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        const cart = await Cart.findOne({ userId }).populate("items.productId", "name stock price");
+        const cart = await Cart.findOne({ userId })
+            .populate("items.productId", "name stock price image");
 
         if (!cart) return res.status(404).json({ message: "Carrito no encontrado" });
 
-        // Calculamos subtotales y el total general
         const itemsWithSubtotal = cart.items.map(item => {
             const product = item.productId;
             const quantity = item.quantity;
             const price = product.price;
             const subtotal = quantity * price;
+
+            const img = product.image?.startsWith("http")
+                ? product.image
+                : `${req.protocol}://${req.get("host")}/uploads/${product.image}`;
 
             return {
                 productId: product._id,
@@ -71,6 +75,7 @@ export const getCart = async (req, res) => {
                 price,
                 quantity,
                 stock: product.stock,
+                imageUrl: img,
                 subtotal
             };
         });
@@ -86,6 +91,7 @@ export const getCart = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 
 export const updateCartItem = async (req, res) => {
@@ -149,6 +155,7 @@ export const clearCart = async (req, res) => {
 
 export const checkoutCart = async (req, res) => {
     const userId = req.user.id;
+    console.log("📦 Checkout para usuario:", userId);
 
     try {
         const cart = await Cart.findOne({ userId }).populate("items.productId");
@@ -158,45 +165,47 @@ export const checkoutCart = async (req, res) => {
 
         let total = 0;
 
-        // Validación de stock
         for (const item of cart.items) {
             const product = item.productId;
-            if (!product) continue;
+            if (!product) {
+                console.error("❌ Producto no encontrado en item:", item);
+                return res.status(400).json({ message: "Producto no válido en el carrito." });
+            }
 
             if (product.stock < item.quantity) {
                 return res.status(400).json({
-                    message: `Stock insuficiente para el producto "${product.name}". Solo hay ${product.stock} unidades.`
+                    message: `Stock insuficiente para "${product.name}". Solo hay ${product.stock} unidades.`,
                 });
             }
 
             total += product.price * item.quantity;
         }
 
-        // Descontar stock
         for (const item of cart.items) {
             await Product.findByIdAndUpdate(item.productId._id, {
-                $inc: { stock: -item.quantity }
+                $inc: { stock: -item.quantity },
             });
         }
 
-        // Guardar orden
         const order = new Order({
             userId,
-            items: cart.items.map(item => ({
+            items: cart.items.map((item) => ({
                 productId: item.productId._id,
-                quantity: item.quantity
+                quantity: item.quantity,
             })),
-            total
+            total,
+            status: "pendiente",
         });
 
         await order.save();
+        console.log("✅ Orden guardada:", order);
 
-        // Vaciar carrito
         cart.items = [];
         await cart.save();
 
         res.status(200).json({ message: "Compra completada y orden generada.", order });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error("💥 Error en checkoutCart:", error);
+        res.status(500).json({ message: error.message, stack: error.stack });
     }
 };

@@ -8,7 +8,7 @@ import path from "path";
 dotenv.config();
 connectDB();
 
-app.use(helmet()); // Seguridad adicional para proteger las cabeceras HTTP
+app.use(helmet());
 app.use("/uploads", express.static(path.resolve("uploads")));
 
 const PORT = process.env.PORT || 4000;

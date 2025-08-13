@@ -1,4 +1,4 @@
-// src/components/Footer.jsx
+
 export default function Footer() {
   return (
     <footer className="bg-transparent text-black p-4 mt-8 text-center">

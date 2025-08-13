@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Product from "./models/product.model.js"; // ajusta el path si es diferente
+import Product from "./models/product.model.js";
 import { connectDB } from "./config/db.js";
 
 dotenv.config();

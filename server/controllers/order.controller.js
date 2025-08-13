@@ -93,6 +93,23 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
+export const getOrderById = async (req, res) => {
+  try {
+    const order = await Order.findOne({
+      _id: req.params.id,
+      userId: req.user.id
+    }).populate("items.productId", "name price description");
+
+    if (!order) {
+      return res.status(404).json({ message: "Orden no encontrada" });
+    }
+
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const updateOrderStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -130,7 +147,7 @@ export const getInvoice = async (req, res) => {
       return res.status(404).json({ message: "Orden no encontrada" });
     }
 
-    // ⚠️ Verificación de permisos
+    // Verificación de permisos
     const isOwner = order.userId._id.equals(req.user.id);
     const isAdmin = req.user.rol === "admin";
 
@@ -175,31 +192,31 @@ export const generateInvoice = async (req, res) => {
     const stream = fs.createWriteStream(filePath);
     doc.pipe(stream);
 
-    // 🎨 Marco visual general
+    // Marco visual general
     doc
       .rect(45, 45, 520, 700)
       .strokeColor("#dddddd")
       .lineWidth(1)
       .stroke();
 
-    // 🧾 Título
+    // Título
     doc.font("Helvetica-Bold").fontSize(18).text("Factura de compra", 50, 60, { align: "center" });
     doc.moveDown();
 
-    // 👤 Datos del cliente
+    // Datos del cliente
     doc.font("Helvetica").fontSize(12);
     doc.text(`Cliente: ${order.userId.firstName} ${order.userId.lastName}`);
     doc.text(`Documento: ${order.userId.documentType} ${order.userId.documentNumber}`);
     doc.text(`Correo: ${order.userId.email}`);
     doc.text(`Fecha: ${order.createdAt.toLocaleDateString()}`);
     
-    // 🎯 Estado con color
+    // Estado con color
     const estadoColor = order.status === "enviada" ? "green" : "red";
     doc.fillColor(estadoColor).text(`Estado: ${order.status}`);
     doc.fillColor("black");
     doc.moveDown();
 
-    // 📦 Encabezados de tabla
+    // Encabezados de tabla
     doc.font("Helvetica-Bold").fontSize(12);
     const startY = doc.y;
     doc.text("Producto", 50, startY);
@@ -210,13 +227,13 @@ export const generateInvoice = async (req, res) => {
 
     doc.font("Helvetica").fontSize(12);
 
-    // 📐 Coordenadas columna
+    // Coordenadas columna
     const columnaProducto = 50;
     const columnaPrecio = 250;
     const columnaCantidad = 350;
     const columnaSubtotal = 450;
 
-    // 🛒 Filas + líneas
+    // Filas + líneas
     order.items.forEach((item) => {
       const name = item.productId.name;
       const price = item.productId.price.toFixed(2);
@@ -239,7 +256,7 @@ export const generateInvoice = async (req, res) => {
       doc.moveDown();
     });
 
-    // 💵 Total
+    // Total
     doc
       .moveDown()
       .font("Helvetica-Bold")
@@ -247,14 +264,14 @@ export const generateInvoice = async (req, res) => {
       .fillColor("blue")
       .text(`Total: $${order.total.toFixed(2)}`, { align: "right" });
 
-    // ✍️ Firma y cierre
+    // Firma y cierre
     doc.moveDown().moveDown();
     doc.font("Helvetica-Oblique").fontSize(10).fillColor("#555555");
     doc.text("Gracias por tu compra responsable", { align: "center" });
     doc.text("Ecoventuras - Compras con impacto", { align: "center" });
     doc.fillColor("black");
 
-    // ✔️ Finaliza
+    // Finaliza
     doc.end();
 
     stream.on("finish", () => {

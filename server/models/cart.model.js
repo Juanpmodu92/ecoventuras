@@ -4,9 +4,9 @@ import mongoose from "mongoose";
 const cartSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User", // o "User" si estás usando un modelo unificado
+        ref: "User",
         required: true,
-        unique: true // Un solo carrito por usuario
+        unique: true 
     },
     items: [
         {

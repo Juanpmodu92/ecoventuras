@@ -18,8 +18,8 @@ const app = express();
 
 // Middlewares
 app.use(cors({
-  origin: 'http://localhost:5173',  // Vite frontend
-  credentials: true                 // Permite envío de cookies si usas auth
+  origin: 'http://localhost:5173',  
+  credentials: true           
 }));
 app.use(morgan("dev"));
 app.use(express.json());

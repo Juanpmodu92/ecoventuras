@@ -10,7 +10,7 @@ export const createProduct = async (req, res) => {
             return res.status(400).json({ message: "El producto ya existe." });
         }
 
-        // ✅ Guardar la URL completa directamente
+        // Guardar la URL completa directamente
         const image = req.file 
             ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
             : "";
@@ -51,7 +51,14 @@ export const getProductById = async (req, res) => {
         if (!product)
             return res.status(404).json({ message: "Producto no encontrado" });
 
-        res.json(product);
+        const img = product.image?.startsWith("http")
+            ? product.image
+            : `${req.protocol}://${req.get("host")}${product.image}`;
+
+        res.json({
+            ...product.toObject(),
+            imageUrl: img
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -127,7 +134,7 @@ export const getLowStockCount = async (req, res) => {
 
         const lowStockProducts = await Product.find(
             { stock: { $lte: lowStockThreshold } },
-            "name stock code"  // mostramos solo los campos necesarios
+            "name stock code" 
         );
 
         res.status(200).json({

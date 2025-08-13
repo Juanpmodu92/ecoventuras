@@ -19,7 +19,7 @@ import { isAdmin } from "../middlewares/validateRole.js";
 
 const router = Router();
 
-// ✅ Configurar multer ANTES de usarlo
+// Configurar multer ANTES de usarlo
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/');
@@ -31,7 +31,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// ✅ Usar upload después de declararlo
+// Usar upload después de declararlo
 
 // Todos los usuarios pueden consultar esta ruta
 router.get("/products", getAvailableProducts);
@@ -40,7 +40,7 @@ router.get("/products", getAvailableProducts);
 router.post("/products", authRequired, isAdmin, upload.single("image"), validateSchema(productSchema), createProduct);
 router.put("/products/:id", authRequired, isAdmin, validateSchema(productSchema), updateProduct);
 router.delete("/products/:id", authRequired, isAdmin, deleteProduct);
-router.get("/products/:id", authRequired, isAdmin, validateSchema(productSchema), getProductById);
+router.get("/products/:id", getProductById);
 router.get("/admin/products", authRequired, isAdmin, validateSchema(productSchema), getProducts);
 router.get("/admin/low-stock-count", authRequired, isAdmin, getLowStockCount);
 

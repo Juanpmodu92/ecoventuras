@@ -1,30 +1,21 @@
-import axios from "axios";
-import Cookies from "js-cookie";
+import axios from "./axios";
 
-const API_URL = "http://localhost:4000/api";
+export const getCartRequest = () => axios.get("/cart", { withCredentials: true });
 
-const getAuthHeaders = () => {
-    const token = Cookies.get("token");
-    return {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    };
-};
+export const addToCartRequest = (productId, quantity) =>
+    axios.post("/cart", { productId, quantity }, { withCredentials: true });
 
-export const fetchCart = () => axios.get(`${API_URL}/cart`, getAuthHeaders());
+export const updateCartItemRequest = (productId, quantity) =>
+    axios.put("/cart/item", { productId, quantity }, { withCredentials: true });
 
-export const addItemToCart = (productId, quantity = 1) =>
-    axios.post(`${API_URL}/cart`, { productId, quantity }, getAuthHeaders());
+export const removeFromCartRequest = (productId) =>
+    axios.delete("/cart/item", {
+        data: { productId },
+        withCredentials: true
+    });
 
-export const updateCartItem = (productId, quantity) =>
-    axios.put(`${API_URL}/cart/item`, { productId, quantity }, getAuthHeaders());
+export const clearCartRequest = () =>
+    axios.delete("/cart", { withCredentials: true });
 
-export const removeItemFromCart = (productId) =>
-    axios.delete(`${API_URL}/cart/item`, { data: { productId }, ...getAuthHeaders() });
-
-export const clearCart = () =>
-    axios.delete(`${API_URL}/cart`, getAuthHeaders());
-
-export const checkoutCart = () =>
-    axios.post(`${API_URL}/cart/checkout`, {}, getAuthHeaders());
+export const checkoutCartRequest = () =>
+    axios.post("/cart/checkout", {}, { withCredentials: true });

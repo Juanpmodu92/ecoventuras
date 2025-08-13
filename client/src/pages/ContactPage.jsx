@@ -14,7 +14,7 @@ export default function ContactPage() {
         "http://localhost:4000/api/contact",
         { subject, message },
         {
-          withCredentials: true, // Permite enviar cookies con la petición
+          withCredentials: true,
         }
       );
       setStatus({ success: true, message: response.data.message });

@@ -78,7 +78,7 @@ const productSchema = new mongoose.Schema({
     code: { type: String, unique: true },
     category: {
         type: String,
-        enum: ["hogar", "personal", "jardinería", "otros"], // puedes extender esto
+        enum: ["hogar", "personal", "jardinería", "otros"], 
         required: true
     }
 });

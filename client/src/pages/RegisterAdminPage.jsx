@@ -9,7 +9,7 @@ function RegisterAdminPage() {
         handleSubmit,
         formState: { errors },
     } = useForm();
-    const { signupAdmin, isAuthenticated } = useAuth(); // O usa signup si quieres centralizar
+    const { signupAdmin, isAuthenticated } = useAuth(); 
     const navigate = useNavigate();
 
     useEffect(() => {

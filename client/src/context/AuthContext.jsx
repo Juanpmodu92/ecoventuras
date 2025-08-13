@@ -24,7 +24,7 @@ export const useAuth = () => {
         console.log("Registro exitoso:", res.data);
         setUser(res.data);
         setIsAuthenticated(true);
-        setErrors([]); // limpia errores si todo sale bien
+        setErrors([]);
         } catch (error) {
         const data = error.response?.data;
 

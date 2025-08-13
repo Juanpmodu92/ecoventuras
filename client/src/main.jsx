@@ -4,12 +4,12 @@ import './index.css'
 import 'leaflet/dist/leaflet.css';
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
-import { CartProvider } from './context/CartContext.jsx'  // importa CartProvider
+import { CartProvider } from './context/CartContext.jsx'  
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <CartProvider>  {/* ENVUELVE también aquí */}
+      <CartProvider> 
         <App />
       </CartProvider>
     </AuthProvider>

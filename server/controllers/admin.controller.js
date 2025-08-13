@@ -57,7 +57,7 @@ export const getDashboardSummary = async (req, res) => {
             },
             { $sort: { "_id": -1 } },
             { $limit: 6 },
-            { $sort: { "_id": 1 } } // orden cronológico
+            { $sort: { "_id": 1 } } 
         ]);
 
         res.json({
