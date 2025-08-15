@@ -3,7 +3,7 @@ import {
   getFavoritesRequest,
   addFavoriteRequest,
   removeFavoriteRequest,
-} from "../api/favorites"; // Debes crear estas funciones en api/favorites.js
+} from "../api/favorites";
 
 const FavoritesContext = createContext();
 

@@ -3,7 +3,6 @@ import { createContext, useContext, useState } from "react";
 const NotificationsContext = createContext();
 
 export const NotificationsProvider = ({ children }) => {
-  // Puedes iniciar con 0 o traerlos de un backend
   const [notificationsCount, setNotificationsCount] = useState(0);
 
   const addNotification = () => setNotificationsCount((prev) => prev + 1);

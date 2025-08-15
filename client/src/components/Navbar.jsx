@@ -1,11 +1,11 @@
-// src/components/Navbar.jsx (o donde lo tengas)
+// src/components/Navbar.jsx
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useFavorites } from "../context/FavoritesContext";
 import { useNotifications } from "../context/NotificationsContext";
 import { useState, useRef, useEffect } from "react";
-import { Search, MapPin, Heart, ShoppingCart, Bell, Menu, ChevronDown, X } from "lucide-react";
+import { Search, Heart, ShoppingCart, Bell, Menu, ChevronDown, X } from "lucide-react";
 import logo from "../assets/logo.png";
 
 export default function Navbar() {
@@ -24,12 +24,9 @@ export default function Navbar() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Mantengo tu comportamiento original
     console.log("Buscar:", searchQuery);
     setSearchQuery("");
     setMobileMenuOpen(false);
-    // Si luego quieres navegar:
-    // navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
   };
 
   const handleLogout = () => {
@@ -38,7 +35,7 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   };
 
-  // Cerrar menú de usuario al hacer clic fuera
+  // Cerrar menú usuario al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
@@ -49,7 +46,7 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Cerrar menús con ESC y clic fuera del panel móvil
+  // Cerrar menús con ESC y clic fuera en móvil
   useEffect(() => {
     const onKeyDown = (e) => {
       if (e.key === "Escape") {
@@ -82,26 +79,22 @@ export default function Navbar() {
 
       {/* Barra principal */}
       <div className="flex items-center justify-between px-6 py-3">
-        {/* Logo y ubicación */}
+        {/* Logo */}
         <div className="flex items-center gap-4">
           <Link to="/" aria-label="Ir al inicio">
             <img src={logo} alt="EcoVenturas" className="h-20 w-auto" />
           </Link>
-
           <Link to="/">
             <div
               className="hidden sm:flex items-center text-[#2D5333] text-sm cursor-pointer hover:text-green-600"
               title="Ir al inicio"
             >
-              <h1 className="text-4xl">
-                <span className="font-bold italic">Eco</span>
-                <span className="font-bold italic">Venturas</span>
-              </h1>
+              <h1 className="text-4xl font-bold italic">EcoVenturas</h1>
             </div>
           </Link>
         </div>
 
-        {/* Buscador (Escritorio) */}
+        {/* Buscador escritorio */}
         <form
           onSubmit={handleSearch}
           className="flex-1 max-w-2xl mx-6 relative hidden md:block"
@@ -121,7 +114,7 @@ export default function Navbar() {
           />
         </form>
 
-        {/* Iconos y menú usuario */}
+        {/* Iconos y usuario (escritorio) */}
         <div className="flex items-center gap-6 text-gray-700">
           {/* Favoritos */}
           <Link to="/favorites" className="relative hover:text-green-600" aria-label="Favoritos">
@@ -153,9 +146,9 @@ export default function Navbar() {
             )}
           </Link>
 
-          {/* Menú usuario */}
+          {/* Usuario */}
           {isAuthenticated ? (
-            <div className="relative" ref={userMenuRef}>
+            <div className="relative hidden md:block" ref={userMenuRef}>
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                 className="flex items-center gap-2 text-green-700 font-semibold hover:text-green-800"
@@ -219,12 +212,23 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            <Link to="/login" className="text-sm font-semibold text-green-700 hover:underline">
-              Ingresa
-            </Link>
+            <div className="hidden md:flex items-center gap-4">
+              <Link
+                to="/login"
+                className="text-sm font-semibold bg-green-600 text-white px-3 py-1 rounded-full hover:bg-green-700 transition"
+              >
+                Ingresa
+              </Link>
+              <Link
+                to="/register"
+                className="text-sm font-semibold bg-green-600 text-white px-3 py-1 rounded-full hover:bg-green-700 transition"
+              >
+                Crear tu cuenta
+              </Link>
+            </div>
           )}
 
-          {/* Botón menú móvil */}
+          {/* Menú móvil */}
           <button
             onClick={() => setMobileMenuOpen((v) => !v)}
             className="md:hidden text-gray-700 ml-1"
@@ -236,7 +240,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Categorías centradas (Escritorio) */}
+      {/* Categorías escritorio */}
       <div className="bg-green-50 px-6 py-2 text-sm text-gray-700 hidden md:flex justify-center gap-6">
         <Link to="/category/hogar" className="hover:text-green-600">Hogar</Link>
         <Link to="/category/ecotecnologia" className="hover:text-green-600">EcoTecnología</Link>
@@ -245,10 +249,10 @@ export default function Navbar() {
         <Link to="/category/alimentos" className="hover:text-green-600">Alimentos</Link>
       </div>
 
-      {/* Menú móvil desplegable */}
+      {/* Menú móvil */}
       {mobileMenuOpen && (
         <div ref={mobileMenuRef} className="md:hidden bg-white shadow-lg px-6 py-4 space-y-4">
-          {/* Buscador móvil */}
+          {/* Buscador */}
           <form onSubmit={handleSearch} className="relative">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
@@ -265,7 +269,7 @@ export default function Navbar() {
             />
           </form>
 
-          {/* Categorías móvil */}
+          {/* Categorías */}
           <div className="flex flex-col gap-3 text-sm">
             <Link onClick={() => setMobileMenuOpen(false)} to="/category/hogar" className="hover:text-green-600">Hogar</Link>
             <Link onClick={() => setMobileMenuOpen(false)} to="/category/ecotecnologia" className="hover:text-green-600">EcoTecnología</Link>
@@ -273,6 +277,26 @@ export default function Navbar() {
             <Link onClick={() => setMobileMenuOpen(false)} to="/category/jardin" className="hover:text-green-600">Jardín</Link>
             <Link onClick={() => setMobileMenuOpen(false)} to="/category/alimentos" className="hover:text-green-600">Alimentos</Link>
           </div>
+
+          {/* Login / Registro móvil */}
+          {!isAuthenticated && (
+            <div className="flex flex-col gap-3 mt-4">
+              <Link
+                onClick={() => setMobileMenuOpen(false)}
+                to="/login"
+                className="bg-green-600 text-white px-3 py-2 rounded-full text-center hover:bg-green-700"
+              >
+                Ingresa
+              </Link>
+              <Link
+                onClick={() => setMobileMenuOpen(false)}
+                to="/register"
+                className="bg-green-600 text-white px-3 py-2 rounded-full text-center hover:bg-green-700"
+              >
+                Crear tu cuenta
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </nav>
