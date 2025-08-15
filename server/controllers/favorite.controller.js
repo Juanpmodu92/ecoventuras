@@ -6,7 +6,7 @@ export const getFavorites = async (req, res) => {
         const user = await User.findById(req.user.id);
         console.log("Favoritos sin populate:", user.favorites);
 
-        const populatedUser = await User.findById(req.user.id).populate("favorites", "name price description");
+        const populatedUser = await User.findById(req.user.id).populate("favorites", "name price description image");
         console.log("Favoritos populados:", populatedUser.favorites);
 
         res.json(populatedUser.favorites);
