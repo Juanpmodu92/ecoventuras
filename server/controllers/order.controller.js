@@ -66,7 +66,19 @@ export const createOrder = async (req, res) => {
 
 export const getOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.user.id }).populate("items.productId", "name price description");
+    let orders;
+
+    if (req.user.rol === "admin") {
+      // Admin ve todas las órdenes
+      orders = await Order.find()
+        .populate("userId", "firstName lastName email")
+        .populate("items.productId", "name price description");
+    } else {
+      // Usuario normal ve solo sus órdenes
+      orders = await Order.find({ userId: req.user.id })
+        .populate("items.productId", "name price description");
+    }
+
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: error.message });

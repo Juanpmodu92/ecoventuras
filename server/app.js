@@ -13,6 +13,8 @@ import reportRoutes from "./routes/report.routes.js";
 import favoriteRoutes from "./routes/favorite.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
+import userRoutes from "./routes/user.routes.js";
+
 
 const app = express();
 
@@ -42,6 +44,10 @@ app.use("/api", favoriteRoutes);
 
 app.use("/api", adminRoutes);
 
+app.use("/api", userRoutes);
+
 app.use("/api/contact", contactRoutes);
+
+
 
 export default app;

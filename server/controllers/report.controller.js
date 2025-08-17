@@ -1,7 +1,5 @@
-
 import { Order } from "../models/order.model.js";
 import Product from "../models/product.model.js";
-import mongoose from "mongoose";
 
 export const getSalesReport = async (req, res) => {
   const { start, end } = req.query;
@@ -15,44 +13,72 @@ export const getSalesReport = async (req, res) => {
       };
     }
 
+    // Obtener órdenes
     const orders = await Order.find(match);
 
+    // Métricas generales
     const totalOrders = orders.length;
     const totalRevenue = orders.reduce((acc, order) => acc + order.total, 0);
 
+    // Conteo de pedidos por estado
     const ordersByStatus = orders.reduce((acc, order) => {
       acc[order.status] = (acc[order.status] || 0) + 1;
       return acc;
     }, {});
 
-    // Productos más vendidos
+    // Productos más vendidos (TOP 5 con revenue)
     const topProductsAgg = await Order.aggregate([
       { $match: match },
       { $unwind: "$items" },
       {
-        $group: {
-          _id: "$items.productId",
-          quantitySold: { $sum: "$items.quantity" }
-        }
-      },
-      { $sort: { quantitySold: -1 } },
-      { $limit: 5 },
-      {
         $lookup: {
           from: "products",
-          localField: "_id",
+          localField: "items.productId",
           foreignField: "_id",
           as: "product"
         }
       },
       { $unwind: "$product" },
       {
-        $project: {
-          _id: 0,
-          name: "$product.name",
-          quantitySold: 1
+        $group: {
+          _id: "$product._id",
+          name: { $first: "$product.name" },
+          price: { $first: "$product.price" },
+          quantitySold: { $sum: "$items.quantity" },
+          totalRevenue: {
+            $sum: { $multiply: ["$items.quantity", "$product.price"] }
+          }
         }
-      }
+      },
+      { $sort: { quantitySold: -1 } },
+      { $limit: 5 }
+    ]);
+
+    // TODOS los productos vendidos (con revenue)
+    const allProductsAgg = await Order.aggregate([
+      { $match: match },
+      { $unwind: "$items" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "items.productId",
+          foreignField: "_id",
+          as: "product"
+        }
+      },
+      { $unwind: "$product" },
+      {
+        $group: {
+          _id: "$product._id",
+          name: { $first: "$product.name" },
+          price: { $first: "$product.price" },
+          quantitySold: { $sum: "$items.quantity" },
+          totalRevenue: {
+            $sum: { $multiply: ["$items.quantity", "$product.price"] }
+          }
+        }
+      },
+      { $sort: { quantitySold: -1 } }
     ]);
 
     // Ventas por categoría
@@ -73,9 +99,7 @@ export const getSalesReport = async (req, res) => {
           _id: "$productInfo.category",
           totalSold: { $sum: "$items.quantity" },
           totalRevenue: {
-            $sum: {
-              $multiply: ["$items.quantity", "$productInfo.price"]
-            }
+            $sum: { $multiply: ["$items.quantity", "$productInfo.price"] }
           }
         }
       },
@@ -89,12 +113,13 @@ export const getSalesReport = async (req, res) => {
       }
     ]);
 
-    // Única respuesta consolidada
+    // Respuesta final
     res.json({
       totalOrders,
       totalRevenue,
       ordersByStatus,
       topProducts: topProductsAgg,
+      allProducts: allProductsAgg,
       salesByCategory
     });
 

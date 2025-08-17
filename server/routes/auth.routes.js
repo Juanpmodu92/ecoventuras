@@ -11,6 +11,7 @@ import {
 import { authRequired } from "../middlewares/validateToken.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { loginSchema, registerSchema, changePasswordSchema} from "../schemas/auth.schema.js";
+import User from "../models/user.model.js";
 
 const router = Router();
 
@@ -29,10 +30,40 @@ router.put("/profile", authRequired, updateProfile);
 router.put("/profile/password", authRequired, validateSchema(changePasswordSchema), changePassword);
 
 router.get("/profile", authRequired, async (req, res) => {
-  res.json({
-    id: req.user.id,
-    username: req.user.username,
-    rol: req.user.rol
-  });
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+
+    res.json({
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      name: `${user.firstName} ${user.lastName}`,
+      rol: user.rol
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error obteniendo el perfil" });
+  }
 });
-export default router;   
+
+// 🔹 Alias /me para compatibilidad con el frontend
+router.get("/me", authRequired, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+
+    res.json({
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      name: `${user.firstName} ${user.lastName}`,
+      rol: user.rol
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error obteniendo los datos de sesión" });
+  }
+});
+
+export default router;
