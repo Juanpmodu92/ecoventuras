@@ -1,4 +1,3 @@
-// src/pages/admin/AdminDashboard.jsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getProductsRequest } from "../api/products"; 

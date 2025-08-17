@@ -25,6 +25,7 @@ import PaymentPage from "./pages/PaymentPage";
 import CheckoutConfirmPage from "./pages/CheckoutConfirmPage.jsx";
 import OrderDetailPage from "./pages/OrderDetailPage.jsx";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import EditProfilePage from "./pages/EditProfilePage.jsx";
 
 export default function App() {
   return (
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/profile/change-password" element={<ChangePasswordPage />} />
+            <Route path="/profile/edit" element={<EditProfilePage />} />
             <Route path="/checkout/payment" element={<PaymentPage />} />
             <Route path="/checkout/confirm" element={<CheckoutConfirmPage />} />
           </Route>

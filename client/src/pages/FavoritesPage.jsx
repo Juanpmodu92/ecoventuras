@@ -1,4 +1,3 @@
-// src/pages/FavoritesPage.jsx
 import { useFavorites } from "../context/FavoritesContext";
 import { Link } from "react-router-dom";
 

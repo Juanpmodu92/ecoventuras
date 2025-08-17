@@ -10,7 +10,7 @@ export const createProductRequest = (product) => {
   const token = Cookies.get("token");
   return axios.post(API, product, {
     headers: {
-      Authorization: `Bearer ${token}`, // 🔹 enviamos token
+      Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
     },
     withCredentials: true,
@@ -21,7 +21,7 @@ export const updateProductRequest = (id, product) => {
   const token = Cookies.get("token");
   return axios.put(`${API}/${id}`, product, {
     headers: {
-      Authorization: `Bearer ${token}`, // 🔹 enviamos token
+      Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
     },
     withCredentials: true,
@@ -32,7 +32,7 @@ export const deleteProductRequest = (id) => {
   const token = Cookies.get("token");
   return axios.delete(`${API}/${id}`, {
     headers: {
-      Authorization: `Bearer ${token}`, // 🔹 enviamos token
+      Authorization: `Bearer ${token}`,
     },
     withCredentials: true,
   });

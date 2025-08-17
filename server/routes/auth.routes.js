@@ -47,7 +47,6 @@ router.get("/profile", authRequired, async (req, res) => {
   }
 });
 
-// 🔹 Alias /me para compatibilidad con el frontend
 router.get("/me", authRequired, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
