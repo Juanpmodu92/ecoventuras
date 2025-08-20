@@ -37,10 +37,6 @@ export const validateSchema = (schema) => (req, res, next) => {
                         return err.message || "Tipo de documento es requerido";
                     case "documentNumber":
                         return err.message || "Número de documento es requerido";
-                    case "title":
-                        return err.message || "El título es requerido";
-                    case "description":
-                        return err.message || "La descripción es requerida";
                     case "date":
                         return err.code === "invalid_string"
                             ? "La fecha debe tener formato ISO válido"
